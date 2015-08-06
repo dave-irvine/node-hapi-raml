@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preversion": "npm test",
-    "version": "npm run build && git add -A lib",
+    "version": "npm run build && git add -Af lib",
     "postversion": "git push && git push --tags",
     "postinstall": "npm run build",
     "pretest": "./node_modules/.bin/eslint src/",
