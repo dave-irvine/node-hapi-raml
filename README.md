@@ -3,6 +3,10 @@ hapi-raml
 
 This library will take your RAML, parse it using `raml-parser`, and then set up routes in `hapi` to match your RAML.
 
+##Installation
+
+```npm install hapi-raml```
+
 ##Usage
 
 Require in hapi-raml, and pass it a reference to your hapi server, a hashmap of your Controllers, and the path to your
