@@ -1,0 +1,43 @@
+{
+  "name": "hapi-raml",
+  "version": "0.0.1",
+  "description": "Create HAPI bindings from RAML specs automatically",
+  "main": "index.js",
+  "scripts": {
+    "preversion": "npm test",
+    "version": "npm run build && git add -A lib",
+    "postversion": "git push && git push --tags",
+    "postinstall": "npm run build",
+    "pretest": "./node_modules/.bin/eslint src/",
+    "test": "./node_modules/.bin/mocha --compilers js:babel/register",
+    "build": "./node_modules/.bin/babel src --out-dir lib"
+  },
+  "keywords": [
+    "hapi",
+    "raml"
+  ],
+  "author": "Dave Irvine <dave@daveirvine.me>",
+  "license": "MIT",
+  "dependencies": {
+    "babel-runtime": "^5.8.20",
+    "lodash": "^3.10.0",
+    "pluralize": "^1.1.2",
+    "raml-parser": "^0.8.11",
+    "string": "^3.3.0"
+  },
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "eslint": "^0.24.1",
+    "mocha": "^2.2.5",
+    "mock-fs": "^3.0.0",
+    "sinon": "^1.15.4",
+    "sinon-as-promised": "^4.0.0",
+    "sinon-chai": "^2.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dave-irvine/node-hapi-raml.git"
+  }
+}
