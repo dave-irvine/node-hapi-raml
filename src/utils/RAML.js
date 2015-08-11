@@ -32,18 +32,12 @@ export default class RAML {
 
     loadRAMLFile() {
         return new Promise((resolve, reject) => {
-            this.fs.readFile(this.resolvedRamlPath, (err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    this.parser.load(data)
-                    .then((parsedData) => {
-                        resolve(parsedData);
-                    })
-                    .catch((parseErr) => {
-                        reject(new Error('Parsing error: ' + parseErr));
-                    });
-                }
+            this.parser.loadFile(this.resolvedRamlPath)
+            .then((parsedData) => {
+                resolve(parsedData);
+            })
+            .catch((parseErr) => {
+                reject(new Error('Parsing error: ' + parseErr));
             });
         });
     }

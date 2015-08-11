@@ -73,7 +73,7 @@ describe('RAML', () => {
             });
 
             mockParser = {
-                load: () => {
+                loadFile: () => {
                     return new Promise((resolve) => {});
                 }
             };
@@ -86,7 +86,7 @@ describe('RAML', () => {
         });
 
         it('should load the file content and pass it to the parser', () => {
-            let loadStub = sinon.stub(mockParser, 'load', () => {
+            let loadStub = sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve, reject) => {
                     resolve();
                 });
@@ -100,7 +100,7 @@ describe('RAML', () => {
 
         it('should resolve with the parsed raml', () => {
             let expectedAST = 'parsed';
-            let loadStub = sinon.stub(mockParser, 'load', () => {
+            let loadStub = sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve, reject) => {
                     resolve(expectedAST);
                 });
@@ -110,7 +110,7 @@ describe('RAML', () => {
         });
 
         it('should reject if the raml fails to parse', () => {
-            let loadStub = sinon.stub(mockParser, 'load', () => {
+            let loadStub = sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve, reject) => {
                     reject();
                 });
@@ -131,7 +131,7 @@ describe('RAML', () => {
             });
 
             mockParser = {
-                load: () => {
+                loadFile: () => {
                     return new Promise((resolve) => {
                         resolve({
                             resources: []
@@ -154,7 +154,7 @@ describe('RAML', () => {
         it('should reject if given invalid resources', () => {
             let resources = [{}];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -170,7 +170,7 @@ describe('RAML', () => {
                 relativeUri: '/objects'
             }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -192,7 +192,7 @@ describe('RAML', () => {
                 }]
             }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -213,7 +213,7 @@ describe('RAML', () => {
                 }]
             }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -238,7 +238,7 @@ describe('RAML', () => {
                 }]
             }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -265,7 +265,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -291,7 +291,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -318,7 +318,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -345,7 +345,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -372,7 +372,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -398,7 +398,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -425,7 +425,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
@@ -459,7 +459,7 @@ describe('RAML', () => {
                     ]
                 }];
 
-            sinon.stub(mockParser, 'load', () => {
+            sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
                         resources: resources
