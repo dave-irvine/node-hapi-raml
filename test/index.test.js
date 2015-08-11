@@ -35,7 +35,9 @@ describe('hapi-raml', () => {
 
         it('should throw if not passed a path to a raml file', () => {
             expect(() => {
-                let fakeServer = () => {},
+                let fakeServer = {
+                        route: () => {}
+                    },
                     fakeControllersMap = {};
 
                 hapiRaml = new HapiRaml(fakeServer, fakeControllersMap);
@@ -44,7 +46,9 @@ describe('hapi-raml', () => {
 
         it('should not throw if passed all required properties', () => {
             expect(() => {
-                let fakeServer = () => {},
+                let fakeServer = {
+                        route: () => {}
+                    },
                     fakeControllersMap = {},
                     ramlPath = './test.raml';
 

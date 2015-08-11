@@ -8,7 +8,8 @@ import _ from 'lodash';
 export default class HapiRaml {
     constructor(server, controllersMap, ramlPath) {
         if (server === undefined
-        || typeof server !== 'function') {
+        || server.route === undefined
+        || typeof server.route !== 'function') {
             throw new Error('Missing `server` dependency.');
         } else {
             this.server = server;

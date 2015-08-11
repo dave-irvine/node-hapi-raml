@@ -4,6 +4,7 @@
   "description": "Create HAPI bindings from RAML specs automatically",
   "main": "index.js",
   "scripts": {
+    "prepublish": "rm -rf lib",
     "preversion": "npm test",
     "version": "npm run build",
     "postversion": "git push && git push --tags",
