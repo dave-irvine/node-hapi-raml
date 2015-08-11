@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/dave-irvine/node-hapi-raml.svg?branch=master)](https://travis-ci.org/dave-irvine/node-hapi-raml)
+[![NPM](https://nodei.co/npm/hapi-raml.png?mini=true)](https://nodei.co/npm/hapi-raml/)
 hapi-raml
 ----
 
