@@ -1,6 +1,6 @@
 {
   "name": "hapi-raml",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Create HAPI bindings from RAML specs automatically",
   "main": "index.js",
   "scripts": {
