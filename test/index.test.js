@@ -184,7 +184,7 @@ describe('hapi-raml', () => {
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
-                        'authStrategy': ['null']
+                        'authStrategy': ['jwt']
                     }
                 ];
 
@@ -192,7 +192,7 @@ describe('hapi-raml', () => {
                 .then(() => {
                     let expectedArgs = sinon.match({
                         config: sinon.match({
-                            auth: sinon.match.any
+                            auth: sinon.match.truthy
                         })
                     });
 
@@ -225,14 +225,14 @@ describe('hapi-raml', () => {
                     });
             });
 
-            it('should set the auth config mode to be optional when the authStrategy contains `null`', () => {
+            it('should set the auth config mode to be optional when the authStrategy contains null', () => {
                 routeMap = [
                     {
                         'className': 'TestController',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
-                        'authStrategy': ['null', 'jwt']
+                        'authStrategy': [null, 'jwt']
                     }
                 ];
 
@@ -282,7 +282,7 @@ describe('hapi-raml', () => {
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
-                        'authStrategy': ['null', 'jwt']
+                        'authStrategy': [null, 'jwt']
                     }
                 ];
 
@@ -300,14 +300,14 @@ describe('hapi-raml', () => {
                 });
             });
 
-            it('should not set the auth config if `null` is the only authStrategy', () => {
+            it('should not set the auth config if null is the only authStrategy', () => {
                 routeMap = [
                     {
                         'className': 'TestController',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
-                        'authStrategy': ['null']
+                        'authStrategy': [null]
                     }
                 ];
 

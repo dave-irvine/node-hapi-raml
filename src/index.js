@@ -49,7 +49,7 @@ export default class HapiRaml {
                                 };
 
                                 _.each(route.authStrategy, (authStrategy) => {
-                                    if (authStrategy !== 'null') {
+                                    if (authStrategy !== null) {
                                         authOptions.strategies.push(authStrategy);
                                     } else {
                                         authOptions.mode = 'optional';
