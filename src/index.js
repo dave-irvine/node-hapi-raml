@@ -40,10 +40,31 @@ export default class HapiRaml {
                         if (controller[route.classFunction] !== undefined
                         && typeof controller[route.classFunction] === 'function') {
                             let controllerFunction = controller[route.classFunction];
+                            let routeOptions = {};
+
+                            if (route.authStrategy !== undefined) {
+                                let authOptions = {
+                                    mode: 'required',
+                                    strategies: []
+                                };
+
+                                _.each(route.authStrategy, (authStrategy) => {
+                                    if (authStrategy !== 'null') {
+                                        authOptions.strategies.push(authStrategy);
+                                    } else {
+                                        authOptions.mode = 'optional';
+                                    }
+                                });
+
+                                if (authOptions.strategies.length > 0) {
+                                    routeOptions.auth = authOptions;
+                                }
+                            }
 
                             server.route({
                                 method: route.method,
                                 path: route.uri,
+                                config: routeOptions,
                                 handler: (request, reply) => {
                                     controllerFunction.apply(controller, [request, reply]);
                                 }

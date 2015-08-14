@@ -4,7 +4,7 @@ module.exports = function () {
     return {
         files: [
             'src/**/*.js',
-            'test/test.raml'
+            'test/*.raml'
         ],
 
         tests: [
@@ -16,6 +16,9 @@ module.exports = function () {
         },
         env: {
             type: 'node'
+        },
+        workers: {
+            recycle: true
         }
     };
 };

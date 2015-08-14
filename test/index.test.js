@@ -148,5 +148,180 @@ describe('hapi-raml', () => {
                 return expect(routeStub).to.have.been.called;
             });
         });
+
+        describe('auth', () => {
+            let routeStub,
+                routeMap;
+
+            beforeEach(() => {
+                routeStub = sinon.stub(fakeServer, 'route', () => {});
+
+                mockFS({
+                    'test.raml': ''
+                });
+
+                fakeControllersMap = {
+                    'TestController': {
+                        'list': () => {},
+                        'fetch': () => {},
+                        'action': () => {}
+                    }
+                };
+
+                hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, ramlPath);
+
+                sinon.stub(hapiRaml.raml, 'getRouteMap', () => {
+                    return new Promise((resolve, reject) => {
+                        resolve(routeMap);
+                    });
+                });
+            });
+
+            it('should call server.route() with an auth config when a route has an associated authStrategy', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET',
+                        'authStrategy': ['null']
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                .then(() => {
+                    let expectedArgs = sinon.match({
+                        config: sinon.match({
+                            auth: sinon.match.any
+                        })
+                    });
+
+                    return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                });
+            });
+
+            it('should set the auth config mode to be required when the authStrategy does not contain `null`', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET',
+                        'authStrategy': ['jwt']
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                    .then(() => {
+                        let expectedArgs = sinon.match({
+                            config: sinon.match({
+                                auth: sinon.match({
+                                    mode: 'required'
+                                })
+                            })
+                        });
+
+                        return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                    });
+            });
+
+            it('should set the auth config mode to be optional when the authStrategy contains `null`', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET',
+                        'authStrategy': ['null', 'jwt']
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                .then(() => {
+                    let expectedArgs = sinon.match({
+                        config: sinon.match({
+                            auth: sinon.match({
+                                mode: 'optional'
+                            })
+                        })
+                    });
+
+                    return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                });
+            });
+
+            it('should set the auth config strategies to match all the authStrategy elements', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET',
+                        'authStrategy': ['jwt', 'oauth']
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                .then(() => {
+                    let expectedArgs = sinon.match({
+                        config: sinon.match({
+                            auth: sinon.match({
+                                strategies: ['jwt', 'oauth']
+                            })
+                        })
+                    });
+
+                    return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                });
+            });
+
+            it('should not include `null` in the auth config strategies', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET',
+                        'authStrategy': ['null', 'jwt']
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                .then(() => {
+                    let expectedArgs = sinon.match({
+                        config: sinon.match({
+                            auth: sinon.match({
+                                strategies: ['jwt']
+                            })
+                        })
+                    });
+
+                    return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                });
+            });
+
+            it('should not set the auth config if `null` is the only authStrategy', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET',
+                        'authStrategy': ['null']
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                .then(() => {
+                    let expectedArgs = sinon.match({
+                        config: sinon.match({
+                            auth: sinon.match.falsy
+                        })
+                    });
+
+                    return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                });
+            });
+        });
     });
 });
