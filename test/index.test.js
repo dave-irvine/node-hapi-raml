@@ -300,7 +300,7 @@ describe('hapi-raml', () => {
                 });
             });
 
-            it('should not set the auth config if null is the only authStrategy', () => {
+            it('should set the auth config to be false if null is the only authStrategy', () => {
                 routeMap = [
                     {
                         'className': 'TestController',
@@ -315,7 +315,7 @@ describe('hapi-raml', () => {
                 .then(() => {
                     let expectedArgs = sinon.match({
                         config: sinon.match({
-                            auth: sinon.match.falsy
+                            auth: false
                         })
                     });
 

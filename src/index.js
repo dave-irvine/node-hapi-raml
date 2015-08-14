@@ -58,6 +58,8 @@ export default class HapiRaml {
 
                                 if (authOptions.strategies.length > 0) {
                                     routeOptions.auth = authOptions;
+                                } else {
+                                    routeOptions.auth = false;
                                 }
                             }
 
