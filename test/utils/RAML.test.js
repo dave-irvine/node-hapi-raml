@@ -98,8 +98,21 @@ describe('RAML', () => {
             });
         });
 
+        it('should reject if the raml does not parse with a baseUri property', () => {
+            let loadStub = sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve, reject) => {
+                    resolve('parsed');
+                });
+            });
+
+            return expect(newRAML.loadRAMLFile()).to.eventually.be.rejectedWith('Missing `baseUri` property');
+        });
+
         it('should resolve with the parsed raml', () => {
-            let expectedAST = 'parsed';
+            let expectedAST = {
+                'baseUri': 'http://'
+            };
+
             let loadStub = sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve, reject) => {
                     resolve(expectedAST);
@@ -134,6 +147,7 @@ describe('RAML', () => {
                 loadFile: () => {
                     return new Promise((resolve) => {
                         resolve({
+                            baseUri: 'http://',
                             resources: []
                         });
                     });
@@ -157,6 +171,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -173,6 +188,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -195,6 +211,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -216,6 +233,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -241,6 +259,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -268,6 +287,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -294,6 +314,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -321,6 +342,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -348,6 +370,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -375,6 +398,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -401,6 +425,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -428,6 +453,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -462,6 +488,7 @@ describe('RAML', () => {
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {
                     resolve({
+                        baseUri: 'http://',
                         resources: resources
                     });
                 });
@@ -470,6 +497,93 @@ describe('RAML', () => {
             return newRAML.getRouteMap()
             .then((mappedRoutes) => {
                 return expect(mappedRoutes).to.be.of.length(2);
+            });
+        });
+
+        it('should set the auth strategy for a route to be null by default', () => {
+            let resources = [
+                {
+                    relativeUri: '/objects',
+                    type: 'collection',
+                    methods: [{
+                        method: 'get'
+                    }]
+                }];
+
+            let expectedAuthStrategies = ['null'];
+
+            sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve) => {
+                    resolve({
+                        baseUri: 'http://',
+                        resources: resources
+                    });
+                });
+            });
+
+            return newRAML.getRouteMap()
+            .then((mappedRoutes) => {
+                let mappedRoute = mappedRoutes[0];
+                return expect(mappedRoute.authStrategy).to.deep.equal(expectedAuthStrategies);
+            });
+        });
+
+        it('should set the auth strategy to be the default strategy for the API if not specifically defined for a route', () => {
+            let resources = [
+                {
+                    relativeUri: '/objects',
+                    type: 'collection',
+                    methods: [{
+                        method: 'get'
+                    }]
+                }];
+
+            let expectedAuthStrategies = ['jwt'];
+
+            sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve) => {
+                    resolve({
+                        baseUri: 'http://',
+                        securedBy: expectedAuthStrategies,
+                        resources: resources
+                    });
+                });
+            });
+
+            return newRAML.getRouteMap()
+            .then((mappedRoutes) => {
+                let mappedRoute = mappedRoutes[0];
+                return expect(mappedRoute.authStrategy).to.deep.equal(expectedAuthStrategies);
+            });
+        });
+
+        it('should override the default strategy for the API if defined for a route', () => {
+            let expectedAuthStrategies = ['oauth'];
+
+            let resources = [
+                {
+                    relativeUri: '/objects',
+                    type: 'collection',
+                    methods: [{
+                        method: 'get',
+                        securedBy: expectedAuthStrategies
+                    }]
+                }];
+
+            sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve) => {
+                    resolve({
+                        baseUri: 'http://',
+                        securedBy: ['jwt'],
+                        resources: resources
+                    });
+                });
+            });
+
+            return newRAML.getRouteMap()
+            .then((mappedRoutes) => {
+                let mappedRoute = mappedRoutes[0];
+                return expect(mappedRoute.authStrategy).to.deep.equal(expectedAuthStrategies);
             });
         });
     });

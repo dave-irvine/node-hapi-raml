@@ -34,6 +34,10 @@ export default class RAML {
         return new Promise((resolve, reject) => {
             this.parser.loadFile(this.resolvedRamlPath)
             .then((parsedData) => {
+                if (parsedData && !parsedData.baseUri) {
+                    reject(new Error('Missing `baseUri` property'));
+                }
+
                 resolve(parsedData);
             })
             .catch((parseErr) => {
@@ -55,8 +59,22 @@ export default class RAML {
             return str.toUpperCase();
         }
 
-        function resourcesParser(resources, parentResource) {
-            let routeMap = [];
+        function resourcesParser(resources, parentResource, ast) {
+            let routeMap = [],
+                defaultAuthStrategies;
+
+            if (parentResource && parentResource.baseUri) {
+                ast = parentResource;
+                parentResource = undefined;
+            }
+
+            if (ast === undefined) {
+                throw new Error('Resource is not parseable, ast was not passed');
+            } else {
+                if (ast.securedBy !== undefined) {
+                    defaultAuthStrategies = ast.securedBy;
+                }
+            }
 
             resources.forEach((resource) => {
                 let baseClassName,
@@ -121,18 +139,29 @@ export default class RAML {
                 resource.methods.forEach((method) => {
                     resource.hapi.method = uppercase(method.method);
 
+                    if (method.securedBy !== undefined) {
+                        resource.hapi.authStrategy = method.securedBy;
+                    } else {
+                        if (defaultAuthStrategies !== undefined) {
+                            resource.hapi.authStrategy = defaultAuthStrategies;
+                        } else {
+                            resource.hapi.authStrategy = ['null'];
+                        }
+                    }
+
                     let route = {
                         'className': resource.hapi.className,
                         'classFunction': resource.hapi.classFunction,
                         'uri': resource.hapi.resourceUri,
-                        'method': resource.hapi.method
+                        'method': resource.hapi.method,
+                        'authStrategy': resource.hapi.authStrategy
                     };
 
                     routeMap.push(route);
                 });
 
                 if (resource.resources) {
-                    let mappedRoutes = resourcesParser(resource.resources, resource);
+                    let mappedRoutes = resourcesParser(resource.resources, resource, ast);
                     routeMap = _.flatten([routeMap, mappedRoutes]);
                 }
             });
@@ -144,7 +173,7 @@ export default class RAML {
             this.loadRAMLFile()
             .then((ast) => {
                 try {
-                    var parsedResources = resourcesParser(ast.resources);
+                    var parsedResources = resourcesParser(ast.resources, ast);
                     resolve(parsedResources);
                 } catch (e) {
                     reject(e);
