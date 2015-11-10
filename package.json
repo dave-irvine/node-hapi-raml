@@ -20,14 +20,15 @@
   "author": "Dave Irvine <dave@daveirvine.me>",
   "license": "MIT",
   "dependencies": {
-    "babel-runtime": "^5.8.20",
+    "babel-polyfill": "^6.0.16",
     "lodash": "^3.10.0",
     "pluralize": "^1.1.2",
     "raml-parser": "^0.8.11",
     "string": "^3.3.0"
   },
   "devDependencies": {
-    "babel": "^5.8.21",
+    "babel-cli": "^6.1.2",
+    "babel-preset-es2015": "^6.1.2",
     "chai": "^3.2.0",
     "chai-as-promised": "^5.1.0",
     "eslint": "^0.24.1",
