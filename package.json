@@ -4,11 +4,9 @@
   "description": "Create HAPI bindings from RAML specs automatically",
   "main": "index.js",
   "scripts": {
-    "prepublish": "rm -rf lib",
     "preversion": "npm test",
     "version": "npm run build",
     "postversion": "git push && git push --tags",
-    "postinstall": "npm run build",
     "pretest": "./node_modules/.bin/eslint src/",
     "test": "./node_modules/.bin/mocha --compilers js:babel-core/register",
     "build": "./node_modules/.bin/babel src --out-dir lib"
