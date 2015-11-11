@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preversion": "npm test",
-    "version": "npm run build",
+    "version": "npm run build && git add lib/ && git commit -m 'Rebuild lib'",
     "postversion": "git push && git push --tags",
     "pretest": "./node_modules/.bin/eslint src/",
     "test": "./node_modules/.bin/mocha --compilers js:babel-core/register",
