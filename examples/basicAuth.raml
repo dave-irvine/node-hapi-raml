@@ -1,0 +1,20 @@
+#%RAML 0.8
+---
+title: Test API
+baseUri: https://test.raml.net/api/{version}
+version: v1
+mediaType:  application/json
+resourceTypes:
+  - collection:
+      get:
+        responses:
+          200:
+            body:
+securitySchemes:
+  - myBasicAuth:
+      type: 'Basic Authentication'
+/simple:
+  type: collection
+  displayName: Simple
+  get:
+  securedBy: ['myBasicAuth']
