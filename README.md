@@ -26,8 +26,9 @@ controllers.MyController = new MyController();
 
 var hapiRaml = new HapiRaml(server, controllers, './my.raml');
 
+server.connection({ port: 3000 });
+
 hapiRaml.hookup().then(function () {
-    server.connection({ port: 3000 });
     server.start();
 });
 ```

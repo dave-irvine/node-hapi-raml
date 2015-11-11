@@ -16,6 +16,8 @@ var server = new Hapi.Server();
 //Instantiate HapiRaml, passing our Hapi Server, Controllers, and path to a RAML file.
 var hapiRaml = new HapiRaml(server, controllers, './simple.raml');
 
+server.connection({ port: 3000 });
+
 //Hookup the routes.
 hapiRaml.hookup().then(function () {
 	//We could now start our Hapi Server

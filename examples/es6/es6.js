@@ -14,6 +14,8 @@ export default () => {
 	//Instantiate HapiRaml, passing our Hapi Server, Controllers, and path to a RAML file.
 	let hapiRaml = new HapiRaml(server, controllers, '../simple.raml');
 
+	server.connection({ port: 3000 });
+
 	//Hookup the routes.
 	hapiRaml.hookup().then(() => {
 		//We could now start our Hapi Server
