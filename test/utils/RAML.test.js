@@ -510,7 +510,7 @@ describe('RAML', () => {
                     }]
                 }];
 
-            let expectedAuthStrategies = ['null'];
+            let expectedAuthStrategies = [null];
 
             sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve) => {

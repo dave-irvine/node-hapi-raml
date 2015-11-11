@@ -324,6 +324,28 @@ describe('hapi-raml', () => {
                     return expect(routeStub).to.have.been.calledWith(expectedArgs);
                 });
             });
+
+            it('should not set the auth config if there are no authStrategys', () => {
+                routeMap = [
+                    {
+                        'className': 'TestController',
+                        'classFunction': 'list',
+                        'uri': '/',
+                        'method': 'GET'
+                    }
+                ];
+
+                return hapiRaml.hookup()
+                .then(() => {
+                    let expectedArgs = sinon.match({
+                        config: sinon.match({
+                            auth: sinon.falsy
+                        })
+                    });
+
+                    return expect(routeStub).to.have.been.calledWith(expectedArgs);
+                });
+            });
         });
     });
 });

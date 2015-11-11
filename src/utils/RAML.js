@@ -145,7 +145,7 @@ export default class RAML {
                         if (defaultAuthStrategies !== undefined) {
                             resource.hapi.authStrategy = defaultAuthStrategies;
                         } else {
-                            resource.hapi.authStrategy = ['null'];
+                            resource.hapi.authStrategy = [null];
                         }
                     }
 
