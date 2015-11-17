@@ -4,6 +4,9 @@ import path from 'path';
 import pluralize from 'pluralize';
 import string from 'string';
 import _ from 'lodash';
+import dbg from 'debug';
+
+let debug = dbg('Hapi-RAML');
 
 export default class RAML {
     constructor(fs, parser, ramlPath) {
@@ -86,6 +89,8 @@ export default class RAML {
                     throw new Error('Resource is not parseable, no relativeUri');
                 }
 
+                debug(`Parsing resource ${resource.relativeUri}`);
+
                 resource.hapi = {};
                 classFunction = '';
                 strippedRelativeUri = resource.relativeUri.substring(1);
@@ -110,9 +115,13 @@ export default class RAML {
                 className = singularize(className);
                 className = camelize(`-${className}-controller`);
 
+                debug(`Resource classname is ${className}`);
+
+                debug(`Resource type: ${resource.type}`);
                 switch (resource.type) {
                     case 'collection':
                         if (strippedRelativeUri === baseClassName) {
+                            debug(`Special case, resource is top level`);
                             classFunction = 'list';
                         } else {
                             classFunction = strippedRelativeUri.substring(strippedRelativeUri.lastIndexOf('/') + 1);
@@ -122,12 +131,15 @@ export default class RAML {
                     default:
                         switch (strippedRelativeUri) {
                             case '{id}':
+                                debug(`Special case, resource is an {id} match`);
                                 classFunction = 'fetch';
                                 break;
                             default:
                                 classFunction = strippedRelativeUri.substring(strippedRelativeUri.lastIndexOf('/') + 1);
                         }
                 }
+
+                debug(`Resource classFunction is ${classFunction}`);
 
                 resource.hapi.className = className;
                 resource.hapi.classFunction = classFunction;
@@ -137,14 +149,19 @@ export default class RAML {
                 }
 
                 resource.methods.forEach((method) => {
+                    debug(`Parsing resource method ${method.method}`);
+
                     resource.hapi.method = uppercase(method.method);
 
                     if (method.securedBy !== undefined) {
+                        debug(`Method has an authStrategy ${method.securedBy}`);
                         resource.hapi.authStrategy = method.securedBy;
                     } else {
                         if (defaultAuthStrategies !== undefined) {
+                            debug(`There is a default authStrategy that will affect this resource ${defaultAuthStrategies}`);
                             resource.hapi.authStrategy = defaultAuthStrategies;
                         } else {
+                            debug(`There is no authStrategy for this resource`);
                             resource.hapi.authStrategy = [null];
                         }
                     }
@@ -157,10 +174,12 @@ export default class RAML {
                         'authStrategy': resource.hapi.authStrategy
                     };
 
+                    debug(`Adding route to route map`);
                     routeMap.push(route);
                 });
 
                 if (resource.resources) {
+                    debug(`Resource has sub resources`);
                     let mappedRoutes = resourcesParser(resource.resources, resource, ast);
                     routeMap = _.flatten([routeMap, mappedRoutes]);
                 }

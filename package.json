@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.0.16",
+    "debug": "^2.2.0",
     "lodash": "^3.10.0",
     "pluralize": "^1.1.2",
     "raml-parser": "^0.8.11",
