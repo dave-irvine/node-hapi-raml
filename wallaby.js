@@ -1,6 +1,6 @@
-var babel = require('babel');
+var babel = require('babel-core');
 
-module.exports = function () {
+module.exports = function (wallaby) {
     return {
         files: [
             'src/**/*.js',
@@ -11,8 +11,12 @@ module.exports = function () {
             'test/**/*.test.js'
         ],
 
-        preprocessors: {
-            '**/*.js': file => require('babel').transform(file.content, {sourceMap: true})
+        compilers: {
+            '**/*.js': wallaby.compilers.babel({
+                babel: babel,
+                presets: ['es2015'],
+                plugins: ['transform-runtime']
+            })
         },
         env: {
             type: 'node'
