@@ -40,14 +40,22 @@ We borrow the collection/collection-item pattern from RAML and layer Controllers
 Your Controllers should feature at least the following functions, which should expect to receive the Hapi object
 `request`, and a callback `reply`.
 
-#####(API Root)/collection maps to `list()`
+#####GET (API Root)/collection maps to `list()`
 
 Returns an Array of instances of the matching Model for this Controller.
 
-#####(API Root)/collection/{id} maps to `fetch()`
+#####GET (API Root)/collection/{id} maps to `fetch()`
 
 Returns a single instance of the matching Model for this Controller.
 
-#####(API Root)/collection/{id}/(anything) maps to `(anything)()`
+#####DELETE (API Root)/collection/{id} maps to `delete()`
+
+Deletes the matching Model for this Controller.
+
+#####POST (API Root)/collection/{id} maps to `update()`
+
+Updates the matching Model for this Controller.
+
+#####ANY (API Root)/collection/{id}/(anything) maps to `(anything)()`
 
 Whatever you decide!

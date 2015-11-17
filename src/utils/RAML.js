@@ -150,6 +150,7 @@ export default class RAML {
 
                 resource.methods.forEach((method) => {
                     debug(`Parsing resource method ${method.method}`);
+                    let methodClassFunction = resource.hapi.classFunction;
 
                     resource.hapi.method = uppercase(method.method);
 
@@ -166,9 +167,24 @@ export default class RAML {
                         }
                     }
 
+                    switch(method.method) {
+                        case 'post':
+                            if (methodClassFunction === 'fetch') {
+                                debug(`Special case, this is a POST at {id}, which is an update()`);
+                                methodClassFunction = 'update';
+                            }
+                            break;
+                        case 'delete':
+                            if (methodClassFunction === 'fetch') {
+                                debug(`Special case, this is a DELETE at {id}, which is a delete()`);
+                                methodClassFunction = 'delete';
+                            }
+                            break;
+                    }
+
                     let route = {
                         'className': resource.hapi.className,
-                        'classFunction': resource.hapi.classFunction,
+                        'classFunction': methodClassFunction,
                         'uri': resource.hapi.resourceUri,
                         'method': resource.hapi.method,
                         'authStrategy': resource.hapi.authStrategy

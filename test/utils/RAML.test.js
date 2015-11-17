@@ -439,7 +439,7 @@ describe('RAML', () => {
                 });
         });
 
-        it('should convert URIs of resource type `collection-item` and a subpath of {id} to be `fetch()` commands', () => {
+        it('should convert URIs of resource type `collection-item` and a subpath of {id} and a method of `get` to be `fetch()` commands', () => {
             let expectedClassFunction = 'fetch';
             let resources = [
                 {
@@ -465,6 +465,62 @@ describe('RAML', () => {
 
                 return expect(mappedRoute.classFunction).to.equal(expectedClassFunction);
             });
+        });
+
+        it('should convert URIs of resource type `collection-item` and a subpath of {id} and a method of `delete` to be `delete()` commands', () => {
+            let expectedClassFunction = 'delete';
+            let resources = [
+                {
+                    relativeUri: '/{id}',
+                    type: 'collection-item',
+                    methods: [{
+                        method: 'delete'
+                    }]
+                }];
+
+            sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve) => {
+                    resolve({
+                        baseUri: 'http://',
+                        resources: resources
+                    });
+                });
+            });
+
+            return newRAML.getRouteMap()
+                .then((mappedRoutes) => {
+                    let mappedRoute = mappedRoutes[0];
+
+                    return expect(mappedRoute.classFunction).to.equal(expectedClassFunction);
+                });
+        });
+
+        it('should convert URIs of resource type `collection-item` and a subpath of {id} and a method of `post` to be `update()` commands', () => {
+            let expectedClassFunction = 'update';
+            let resources = [
+                {
+                    relativeUri: '/{id}',
+                    type: 'collection-item',
+                    methods: [{
+                        method: 'post'
+                    }]
+                }];
+
+            sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve) => {
+                    resolve({
+                        baseUri: 'http://',
+                        resources: resources
+                    });
+                });
+            });
+
+            return newRAML.getRouteMap()
+                .then((mappedRoutes) => {
+                    let mappedRoute = mappedRoutes[0];
+
+                    return expect(mappedRoute.classFunction).to.equal(expectedClassFunction);
+                });
         });
 
         it('should parse sub resources of a resource', () => {
