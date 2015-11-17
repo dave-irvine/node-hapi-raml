@@ -1,0 +1,8 @@
+.npmignore
+.idea/
+src/
+.travis.yml
+.eslintrc
+.babelrc
+wallaby.js
+
