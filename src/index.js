@@ -15,7 +15,7 @@ export default class HapiRaml {
             this.server = server;
         }
         if (controllersMap === undefined
-        || typeof controllersMap !== 'object') {
+        || typeof controllersMap === 'string') {
             throw new Error('Missing `controllersMap` dependency.');
         } else {
             this.controllersMap = controllersMap;

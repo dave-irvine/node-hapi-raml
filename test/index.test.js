@@ -2,8 +2,6 @@
 /*eslint-disable no-unused-expressions*/
 'use strict';
 
-require('babel-polyfill');
-
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
