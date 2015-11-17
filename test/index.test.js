@@ -87,10 +87,6 @@ describe('hapi-raml', () => {
             mockFS.restore();
         });
 
-        it('should return a Promise', () => {
-            expect(hapiRaml.hookup()).to.be.a('Promise');
-        });
-
         it('should reject if the RAML file is not parseable', () => {
             mockFS.restore();
 
