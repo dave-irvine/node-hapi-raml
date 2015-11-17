@@ -4,9 +4,13 @@ import fs from 'fs';
 import RAML from './utils/RAML';
 import ramlParser from 'raml-parser';
 import _ from 'lodash';
+import dbg from 'debug';
+
+let debug = dbg('Hapi-RAML');
 
 export default class HapiRaml {
     constructor(server, controllersMap, ramlPath) {
+        debug('constructor()');
         if (server === undefined
         || server.route === undefined
         || typeof server.route !== 'function') {

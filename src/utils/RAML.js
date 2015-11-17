@@ -6,10 +6,11 @@ import string from 'string';
 import _ from 'lodash';
 import dbg from 'debug';
 
-let debug = dbg('Hapi-RAML');
+let debug = dbg('Hapi-RAML:RAML');
 
 export default class RAML {
     constructor(fs, parser, ramlPath) {
+        debug('constructor()');
         if (fs === undefined) {
             throw new Error('Missing `fs` dependency.');
         } else {
