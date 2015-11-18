@@ -4,8 +4,7 @@
   "description": "Create HAPI bindings from RAML specs automatically",
   "main": "index.js",
   "scripts": {
-    "preversion": "npm test",
-    "version": "npm run build && git diff-index --quiet --cached HEAD || (git add lib/ && git commit -m 'Rebuild lib')",
+    "preversion": "npm test && npm run build && git diff --exit-code --quiet",
     "postversion": "git push && git push --tags",
     "pretest": "./node_modules/.bin/eslint src/",
     "test": "./node_modules/.bin/mocha --compilers js:babel-core/register",
