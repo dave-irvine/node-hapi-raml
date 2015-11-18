@@ -81,6 +81,10 @@ describe('RAML', () => {
             newRAML = new RAML(mockFS, mockParser, ramlPath);
         });
 
+        it('should return a Promise', () => {
+            expect(newRAML.loadRAMLFile()).to.be.an.instanceOf(Promise);
+        });
+
         it('should load the file content and pass it to the parser', () => {
             let loadStub = sinon.stub(mockParser, 'loadFile', () => {
                 return new Promise((resolve, reject) => {
@@ -151,6 +155,10 @@ describe('RAML', () => {
             };
 
             newRAML = new RAML(mockFS, mockParser, ramlPath);
+        });
+
+        it('should return a Promise', () => {
+            expect(newRAML.getRouteMap()).to.be.an.instanceOf(Promise);
         });
 
         it('should eventually resolve with an Array', () => {
