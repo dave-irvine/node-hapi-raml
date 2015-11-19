@@ -523,6 +523,34 @@ describe('RAML', () => {
                 });
         });
 
+        it('should convert URIs of resource type `collection-item` and a subpath of {id} and a method of `patch` to be `update()` commands', () => {
+            let expectedClassFunction = 'update';
+            let resources = [
+                {
+                    relativeUri: '/{id}',
+                    type: 'collection-item',
+                    methods: [{
+                        method: 'patch'
+                    }]
+                }];
+
+            sinon.stub(mockParser, 'loadFile', () => {
+                return new Promise((resolve) => {
+                    resolve({
+                        baseUri: 'http://',
+                        resources: resources
+                    });
+                });
+            });
+
+            return newRAML.getRouteMap()
+                .then((mappedRoutes) => {
+                    let mappedRoute = mappedRoutes[0];
+
+                    return expect(mappedRoute.classFunction).to.equal(expectedClassFunction);
+                });
+        });
+
         it('should parse sub resources of a resource', () => {
             let resources = [
                 {

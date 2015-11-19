@@ -169,9 +169,10 @@ export default class RAML {
                     }
 
                     switch(method.method) {
+                        case 'patch':
                         case 'post':
                             if (methodClassFunction === 'fetch') {
-                                debug(`Special case, this is a POST at {id}, which is an update()`);
+                                debug(`Special case, this is a POST or PATCH at {id}, which is an update()`);
                                 methodClassFunction = 'update';
                             }
                             break;

@@ -52,7 +52,7 @@ Returns a single instance of the matching Model for this Controller.
 
 Deletes the matching Model for this Controller.
 
-#####POST (API Root)/collection/{id} maps to `update()`
+#####POST||PATCH (API Root)/collection/{id} maps to `update()`
 
 Updates the matching Model for this Controller.
 
