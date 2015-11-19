@@ -4,6 +4,7 @@
   "description": "Create HAPI bindings from RAML specs automatically",
   "main": "index.js",
   "scripts": {
+    "prepublish": "npm test && npm run build && git diff --exit-code --quiet",
     "preversion": "npm test && npm run build && git diff --exit-code --quiet",
     "postversion": "git push && git push --tags",
     "pretest": "./node_modules/.bin/eslint src/",
