@@ -13,24 +13,22 @@ export default class RAML {
         debug('constructor()');
         if (fs === undefined) {
             throw new Error('Missing `fs` dependency.');
-        } else {
-            this.fs = fs;
         }
 
         if (parser === undefined) {
             throw new Error('Missing `parser` dependency.');
-        } else {
-            this.parser = parser;
         }
 
         if (ramlPath === undefined) {
             throw new Error('Missing path to RAML file');
-        } else {
-            this.resolvedRamlPath = path.resolve(process.cwd(), ramlPath);
+        }
 
-            if (!fs.existsSync(this.resolvedRamlPath)) {
-                throw new Error('path to RAML file does not exist');
-            }
+        this.fs = fs;
+        this.parser = parser;
+        this.resolvedRamlPath = path.resolve(process.cwd(), ramlPath);
+
+        if (!fs.existsSync(this.resolvedRamlPath)) {
+            throw new Error('path to RAML file does not exist');
         }
     }
 
@@ -39,13 +37,13 @@ export default class RAML {
             this.parser.loadFile(this.resolvedRamlPath)
             .then((parsedData) => {
                 if (parsedData && !parsedData.baseUri) {
-                    reject(new Error('Missing `baseUri` property'));
+                    return reject(new Error('Missing `baseUri` property'));
                 }
 
-                resolve(parsedData);
+                return resolve(parsedData);
             })
             .catch((parseErr) => {
-                reject(new Error('Parsing error: ' + parseErr));
+                return reject(new Error('Parsing error: ' + parseErr));
             });
         });
     }
@@ -63,10 +61,12 @@ export default class RAML {
             return str.toUpperCase();
         }
 
+        //Can be called recursively
         function resourcesParser(resources, parentResource, ast) {
             let routeMap = [],
                 defaultAuthStrategies;
 
+            //Shift over some parameters if the parentResource looks like an ast
             if (parentResource && parentResource.baseUri) {
                 ast = parentResource;
                 parentResource = undefined;
@@ -75,6 +75,8 @@ export default class RAML {
             if (ast === undefined) {
                 throw new Error('Resource is not parseable, ast was not passed');
             } else {
+                //A default auth strategy is found at the top of the ast
+                //This can be overriden by an authStrategy on a resource
                 if (ast.securedBy !== undefined) {
                     defaultAuthStrategies = ast.securedBy;
                 }
@@ -94,14 +96,18 @@ export default class RAML {
 
                 resource.hapi = {};
                 classFunction = '';
+
+                //Drop the preceding '/'
                 strippedRelativeUri = resource.relativeUri.substring(1);
 
                 if (parentResource !== undefined) {
+                    //If there is a parent resource, we can infer the needed className from its relativeUri
                     className = parentResource.relativeUri.substring(1);
                     if (className.indexOf('/') > 0) {
                         className = className.substring(0, className.indexOf('/'));
                     }
 
+                    //A sub resource's uri is based upon its parent resource uri
                     resource.hapi.resourceUri = `${parentResource.hapi.resourceUri}${resource.relativeUri}`;
                 } else {
                     className = strippedRelativeUri;
@@ -119,6 +125,9 @@ export default class RAML {
                 debug(`Resource classname is ${className}`);
 
                 debug(`Resource type: ${resource.type}`);
+
+                //Determine the function to call on the Class
+                //This is based on the resource type, as well as the relativeUri
                 switch (resource.type) {
                     case 'collection':
                         if (strippedRelativeUri === baseClassName) {
@@ -168,6 +177,7 @@ export default class RAML {
                         }
                     }
 
+                    //Special http methods can cause a remapping of the Class function we need to call
                     switch(method.method) {
                         case 'patch':
                         case 'post':
