@@ -13,15 +13,14 @@ export default class HapiRaml {
         debug('constructor()');
         if (server === undefined || server.route === undefined || typeof server.route !== 'function') {
             throw new Error('Missing `server` dependency.');
-        } else {
-            this.server = server;
         }
 
         if (controllersMap === undefined || typeof controllersMap === 'string') {
             throw new Error('Missing `controllersMap` dependency.');
-        } else {
-            this.controllersMap = controllersMap;
         }
+
+        this.server = server;
+        this.controllersMap = controllersMap;
 
         this.raml = new RAML(fs, ramlParser, ramlPath);
     }

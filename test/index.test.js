@@ -22,15 +22,25 @@ describe('hapi-raml', () => {
         it('should throw if not passed a hapi-server', () => {
             expect(() => {
                 hapiRaml = new HapiRaml();
-            }).to.throw(/Missing `\w+` dependency/);
+            }).to.throw(/Missing `server` dependency/);
         });
 
-        it('should throw if not passed a controllers map', () => {
+        it('should throw if hapi-server is missing its route() function', () => {
             expect(() => {
                 let fakeServer = () => {};
 
                 hapiRaml = new HapiRaml(fakeServer);
-            }).to.throw(/Missing `\w+` dependency/);
+            }).to.throw(/Missing `server` dependency/);
+        });
+
+        it('should throw if not passed a controllers map', () => {
+            expect(() => {
+                let fakeServer = {
+                    route: () => {}
+                };
+
+                hapiRaml = new HapiRaml(fakeServer);
+            }).to.throw(/Missing `controllersMap` dependency/);
         });
 
         it('should throw if not passed a path to a raml file', () => {
