@@ -11,15 +11,13 @@ let debug = dbg('Hapi-RAML');
 export default class HapiRaml {
     constructor(server, controllersMap, ramlPath) {
         debug('constructor()');
-        if (server === undefined
-        || server.route === undefined
-        || typeof server.route !== 'function') {
+        if (server === undefined || server.route === undefined || typeof server.route !== 'function') {
             throw new Error('Missing `server` dependency.');
         } else {
             this.server = server;
         }
-        if (controllersMap === undefined
-        || typeof controllersMap === 'string') {
+
+        if (controllersMap === undefined || typeof controllersMap === 'string') {
             throw new Error('Missing `controllersMap` dependency.');
         } else {
             this.controllersMap = controllersMap;
@@ -35,61 +33,62 @@ export default class HapiRaml {
 
             this.raml.getRouteMap()
             .then(function (routeMap) {
-                let rejected = false;
-
                 _.each(routeMap, (route) => {
-                    if (controllersMap[route.className] !== undefined) {
-                        let controller = controllersMap[route.className];
+                    let routeOptions = {};
 
-                        if (controller[route.classFunction] !== undefined
-                        && typeof controller[route.classFunction] === 'function') {
-                            let controllerFunction = controller[route.classFunction];
-                            let routeOptions = {};
+                    //The controllersMap must contain the Controller class for this route
+                    let controller = controllersMap[route.className];
 
-                            if (route.authStrategy !== undefined) {
-                                let authOptions = {
-                                    mode: 'required',
-                                    strategies: []
-                                };
-
-                                _.each(route.authStrategy, (authStrategy) => {
-                                    if (authStrategy !== null) {
-                                        authOptions.strategies.push(authStrategy);
-                                    } else {
-                                        authOptions.mode = 'optional';
-                                    }
-                                });
-
-                                if (authOptions.strategies.length > 0) {
-                                    routeOptions.auth = authOptions;
-                                } else {
-                                    routeOptions.auth = false;
-                                }
-                            }
-
-                            server.route({
-                                method: route.method,
-                                path: route.uri,
-                                config: routeOptions,
-                                handler: (request, reply) => {
-                                    controllerFunction.apply(controller, [request, reply]);
-                                }
-                            });
-                        } else {
-                            rejected = true;
-                            reject(`Tried to find '${route.classFunction}' on Controller '${route.className}' but it did not exist.`);
-                            return false;
-                        }
-                    } else {
-                        rejected = true;
-                        reject(`Tried to find Controller '${route.className}' but it did not exist.`);
-                        return false;
+                    if (controller === undefined) {
+                        return reject(`Tried to find Controller '${route.className}' but it did not exist.`);
                     }
+
+                    let controllerFunction = controller[route.classFunction];
+
+                    //The Controller class for this route must contain the function for this route
+                    if (controllerFunction === undefined || typeof controllerFunction !== 'function') {
+                        return reject(`Tried to find '${route.classFunction}' on Controller '${route.className}' but it did not exist.`);
+                    }
+
+                    if (route.authStrategy !== undefined) {
+                        /*
+                            If the route has any authStrategies, then our auth mode is required.
+                            We might override this later if the route has a null authStrategy because this will mean
+                            that it is possible to access the route without auth.
+                         */
+                        let authOptions = {
+                            mode: 'required'
+                        };
+
+                        //Filter out any authStrategies that are null
+                        authOptions.strategies = _.filter(route.authStrategy, (authStrategy) => {
+                            return authStrategy !== null;
+                        });
+
+                        //The route has a null authStrategy, so our auth mode for the entire route is optional
+                        if (authOptions.strategies.length < route.authStrategy.length) {
+                            authOptions.mode = 'optional';
+                        }
+
+                        //The only authStrategy is null, so auth should be false
+                        if (authOptions.strategies.length === 0) {
+                            routeOptions.auth = false;
+                        } else {
+                            routeOptions.auth = authOptions;
+                        }
+                    }
+
+                    server.route({
+                        method: route.method,
+                        path: route.uri,
+                        config: routeOptions,
+                        handler: (request, reply) => {
+                            controllerFunction.apply(controller, [request, reply]);
+                        }
+                    });
                 });
 
-                if (!rejected) {
-                    resolve();
-                }
+                return resolve();
             })
             .catch((err) => {
                 reject(err);
