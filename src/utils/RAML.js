@@ -184,6 +184,9 @@ export default class RAML {
                             if (methodClassFunction === 'fetch') {
                                 debug(`Special case, this is a POST or PATCH at {id}, which is an update()`);
                                 methodClassFunction = 'update';
+                            } else if (methodClassFunction === 'list' && method.method === 'post') {
+                              debug(`Special case, this is a POST on collection, which is a create()`);
+                              methodClassFunction = 'create';
                             }
                             break;
                         case 'delete':

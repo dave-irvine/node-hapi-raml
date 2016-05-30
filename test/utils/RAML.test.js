@@ -356,6 +356,34 @@ describe('RAML', () => {
             });
         });
 
+        it('should convert URIs of `collection` resources with no subpath in the URI an a method of `post` to be `create()` commands', () => {
+          let expectedClassFunction = 'create';
+          let resources = [
+            {
+              relativeUri: '/objects',
+              type: 'collection',
+              methods: [{
+                method: 'post'
+              }]
+            }];
+
+          sinon.stub(mockParser, 'loadFile', () => {
+            return new Promise((resolve) => {
+              resolve({
+                baseUri: 'http://',
+                resources: resources
+              });
+            });
+          });
+
+          return newRAML.getRouteMap()
+            .then((mappedRoutes) => {
+              let mappedRoute = mappedRoutes[0];
+
+              return expect(mappedRoute.classFunction).to.equal(expectedClassFunction);
+            });
+        });
+
         it('should convert URIs of `collection` resources with a subpath in the URI to be commands matching the subpath', () => {
             let expectedClassFunction = 'create';
             let resources = [
