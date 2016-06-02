@@ -44,6 +44,10 @@ Your Controllers should feature at least the following functions, which should e
 
 Returns an Array of instances of the matching Model for this Controller.
 
+#####POST (API Root)/collection maps to `create()`
+
+Create a single instance of the matching Model for this Controller.
+
 #####GET (API Root)/collection/{id} maps to `fetch()`
 
 Returns a single instance of the matching Model for this Controller.
