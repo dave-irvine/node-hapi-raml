@@ -101,7 +101,8 @@ export default class RAML {
                 strippedRelativeUri = resource.relativeUri.substring(1);
 
                 //If parent resource is the root resource, we effectively don't have a parent
-                if (parentResource !== undefined && parentResource.relativeUri !== '/') {
+                //If resource is a collection, it should have its own Controller, not use the parent.
+                if (parentResource !== undefined && parentResource.relativeUri !== '/' && resource.type !== 'collection') {
                     //If there is a parent resource, we can infer the needed className from its relativeUri
                     className = parentResource.relativeUri.substring(1);
                     if (className.indexOf('/') > 0) {
