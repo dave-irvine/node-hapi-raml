@@ -85,9 +85,11 @@ describe('hapi-raml', () => {
             ramlPath = './test.raml';
 
             let testRAML = fs.readFileSync(path.resolve(__dirname, './test.raml'));
+            let rootTestRAML = fs.readFileSync(path.resolve(__dirname, './rootTest.raml'));
 
             mockFS({
-                'test.raml': testRAML
+                'test.raml': testRAML,
+                'rootTest.raml': rootTestRAML
             });
 
             hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, ramlPath);
@@ -113,6 +115,66 @@ describe('hapi-raml', () => {
 
         it('should reject if any controllers listed in the RAML are not found', () => {
             return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller '\w+' but it did not exist/);
+        });
+
+        it('should map root level collections to RootController', () => {
+            hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller 'RootController' but it did not exist/);
+        });
+
+        it('should route resources to the correct relativeUri', () => {
+            let routeStub = sinon.stub(fakeServer, 'route', () => {});
+
+            fakeControllersMap = {
+                'RootController': {
+                    'list': () => {}
+                },
+                'TestController': {
+                    'list': () => {}
+                },
+                'SubTestController': {
+                    'list': () => {},
+                    'item': () => {}
+                }
+            };
+
+            hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
+            return hapiRaml.hookup()
+            .then(() => {
+                return expect(routeStub).to.have.been.calledWith(sinon.match({
+                    path: "/test/subTest/item"
+                }));
+            });
+        });
+
+        it('should map a sub level collection to the Controller for that collection name', () => {
+            fakeControllersMap = {
+                'RootController': {
+                    'list': () => {}
+                }
+            };
+
+            hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
+
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller 'TestController' but it did not exist/);
+        });
+
+        it('should map a sub level collection-item to the Controller for the parent collection name', () => {
+            fakeControllersMap = {
+                'RootController': {
+                    'list': () => {}
+                },
+                'TestController': {
+                    'list': () => {}
+                },
+                'SubTestController': {
+                    'list': () => {}
+                }
+            };
+
+            hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
+
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find '\w+' on Controller 'SubTestController' but it did not exist/);
         });
 
         it('should reject if any functions listed in the RAML are not found on the Controller', () => {
