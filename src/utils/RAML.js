@@ -100,7 +100,8 @@ export default class RAML {
                 //Drop the preceding '/'
                 strippedRelativeUri = resource.relativeUri.substring(1);
 
-                if (parentResource !== undefined) {
+                //If parent resource is the root resource, we effectively don't have a parent
+                if (parentResource !== undefined && parentResource.relativeUri !== '/') {
                     //If there is a parent resource, we can infer the needed className from its relativeUri
                     className = parentResource.relativeUri.substring(1);
                     if (className.indexOf('/') > 0) {
@@ -113,6 +114,12 @@ export default class RAML {
                     className = strippedRelativeUri;
                     if (className.indexOf('/') > 0) {
                         className = className.substring(0, className.indexOf('/'));
+                    }
+
+                    if (className === '') {
+                        //This resource is likely the root resource.
+                        className = 'root';
+                        strippedRelativeUri = 'root';
                     }
 
                     resource.hapi.resourceUri = resource.relativeUri;
