@@ -156,6 +156,9 @@ export default class RAML {
                         }
                 }
 
+                //Camelize class functions to remove "-" from function names
+                classFunction = camelize(classFunction);
+
                 debug(`Resource classFunction is ${classFunction}`);
 
                 resource.hapi.className = className;
