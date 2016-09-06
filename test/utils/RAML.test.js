@@ -246,7 +246,7 @@ describe('RAML', () => {
         });
 
         it('should convert URIs of `collection` resources to be Controller classes', () => {
-            let expectedClass = 'ObjectController';
+            let expectedClass = 'ControllerObject';
             let resources = [
             {
                 relativeUri: '/objects',
@@ -274,7 +274,7 @@ describe('RAML', () => {
         });
 
         it('should convert URIs of `collection-item` resources to be Controller classes', () => {
-            let expectedClass = 'ObjectController';
+            let expectedClass = 'ControllerObject';
             let resources = [
                 {
                     relativeUri: '/objects',
@@ -302,7 +302,7 @@ describe('RAML', () => {
         });
 
         it('should convert URIs with no resource type to be Controller classes', () => {
-            let expectedClass = 'ObjectController';
+            let expectedClass = 'ControllerObject';
             let resources = [
                 {
                     relativeUri: '/objects',

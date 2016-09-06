@@ -129,7 +129,7 @@ export default class RAML {
 
                 baseClassName = className;
                 className = singularize(className);
-                className = camelize(`-${className}-controller`);
+                className = camelize(`Controller-${className}-`);
 
                 debug(`Resource classname is ${className}`);
 

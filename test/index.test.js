@@ -117,22 +117,22 @@ describe('hapi-raml', () => {
             return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller '\w+' but it did not exist/);
         });
 
-        it('should map root level collections to RootController', () => {
+        it('should map root level collections to ControllerRoot', () => {
             hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
-            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller 'RootController' but it did not exist/);
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller 'ControllerRoot' but it did not exist/);
         });
 
         it('should route resources to the correct relativeUri', () => {
             let routeStub = sinon.stub(fakeServer, 'route', () => {});
 
             fakeControllersMap = {
-                'RootController': {
+                'ControllerRoot': {
                     'list': () => {}
                 },
-                'TestController': {
+                'ControllerTest': {
                     'list': () => {}
                 },
-                'SubTestController': {
+                'ControllerSubTest': {
                     'list': () => {},
                     'item': () => {}
                 }
@@ -149,37 +149,37 @@ describe('hapi-raml', () => {
 
         it('should map a sub level collection to the Controller for that collection name', () => {
             fakeControllersMap = {
-                'RootController': {
+                'ControllerRoot': {
                     'list': () => {}
                 }
             };
 
             hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
 
-            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller 'TestController' but it did not exist/);
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find Controller 'ControllerTest' but it did not exist/);
         });
 
         it('should map a sub level collection-item to the Controller for the parent collection name', () => {
             fakeControllersMap = {
-                'RootController': {
+                'ControllerRoot': {
                     'list': () => {}
                 },
-                'TestController': {
+                'ControllerTest': {
                     'list': () => {}
                 },
-                'SubTestController': {
+                'ControllerSubTest': {
                     'list': () => {}
                 }
             };
 
             hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './rootTest.raml');
 
-            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find '\w+' on Controller 'SubTestController' but it did not exist/);
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find '\w+' on Controller 'ControllerSubTest' but it did not exist/);
         });
 
         it('should reject if any functions listed in the RAML are not found on the Controller', () => {
             fakeControllersMap = {
-                'TestController': {}
+                'ControllerTest': {}
             };
 
             hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, ramlPath);
@@ -189,7 +189,7 @@ describe('hapi-raml', () => {
 
         it('should reject if any functions listed in the RAML are not functions on the Controller', () => {
             fakeControllersMap = {
-                'TestController': {
+                'ControllerTest': {
                     'list': () => {},
                     'action': () => {}
                 }
@@ -206,7 +206,7 @@ describe('hapi-raml', () => {
             });
 
             fakeControllersMap = {
-                'TestController': {
+                'ControllerTest': {
                     'list': () => {},
                     'fetch': () => {},
                     'action': () => {}
@@ -233,7 +233,7 @@ describe('hapi-raml', () => {
                 });
 
                 fakeControllersMap = {
-                    'TestController': {
+                    'ControllerTest': {
                         'list': () => {},
                         'fetch': () => {},
                         'action': () => {}
@@ -252,7 +252,7 @@ describe('hapi-raml', () => {
             it('should call server.route() with an auth config when a route has an associated authStrategy', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
@@ -275,7 +275,7 @@ describe('hapi-raml', () => {
             it('should set the auth config mode to be required when the authStrategy does not contain `null`', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
@@ -300,7 +300,7 @@ describe('hapi-raml', () => {
             it('should set the auth config mode to be optional when the authStrategy contains null', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
@@ -325,7 +325,7 @@ describe('hapi-raml', () => {
             it('should set the auth config strategies to match all the authStrategy elements', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
@@ -350,7 +350,7 @@ describe('hapi-raml', () => {
             it('should not include `null` in the auth config strategies', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
@@ -375,7 +375,7 @@ describe('hapi-raml', () => {
             it('should set the auth config to be false if null is the only authStrategy', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET',
@@ -398,7 +398,7 @@ describe('hapi-raml', () => {
             it('should not set the auth config if there are no authStrategys', () => {
                 routeMap = [
                     {
-                        'className': 'TestController',
+                        'className': 'ControllerTest',
                         'classFunction': 'list',
                         'uri': '/',
                         'method': 'GET'
