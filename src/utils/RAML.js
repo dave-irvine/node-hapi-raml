@@ -175,6 +175,7 @@ export default class RAML {
                     let methodClassFunction = resource.hapi.classFunction;
 
                     resource.hapi.method = uppercase(method.method);
+                    resource.hapi.responses = method.responses;
 
                     if (method.securedBy !== undefined) {
                         debug(`Method has an authStrategy ${method.securedBy}`);
@@ -220,6 +221,7 @@ export default class RAML {
                         'classFunction': methodClassFunction,
                         'uri': resource.hapi.resourceUri,
                         'method': resource.hapi.method,
+                        'responses': resource.hapi.responses,
                         'authStrategy': resource.hapi.authStrategy
                     };
 
