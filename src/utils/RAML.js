@@ -160,6 +160,8 @@ export default class RAML {
 
                 //Camelize class functions to remove "-" from function names
                 classFunction = camelize(classFunction);
+                //Remove "." from function names and replace with "-"
+                classFunction = classFunction.replace('.', '_');
 
                 debug(`Resource classFunction is ${classFunction}`);
 

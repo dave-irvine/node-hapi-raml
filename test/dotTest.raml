@@ -1,0 +1,25 @@
+#%RAML 0.8
+---
+title: Test API
+baseUri: https://test.raml.net/api/{version}
+version: v1
+mediaType:  application/json
+resourceTypes:
+  - collection:
+      get:
+        responses:
+          200:
+            body:
+  - collection-item:
+      get:
+        responses:
+          200:
+            body:
+
+/test:
+  type: collection
+  displayName: Users
+  get:
+  /test.type:
+    type: collection-item
+    get:

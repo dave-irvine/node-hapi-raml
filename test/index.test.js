@@ -86,10 +86,12 @@ describe('hapi-raml', () => {
 
             let testRAML = fs.readFileSync(path.resolve(__dirname, './test.raml'));
             let rootTestRAML = fs.readFileSync(path.resolve(__dirname, './rootTest.raml'));
+            let dotTestRAML = fs.readFileSync(path.resolve(__dirname, './dotTest.raml'));
 
             mockFS({
                 'test.raml': testRAML,
-                'rootTest.raml': rootTestRAML
+                'rootTest.raml': rootTestRAML,
+                'dotTest.raml': dotTestRAML
             });
 
             hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, ramlPath);
@@ -145,6 +147,19 @@ describe('hapi-raml', () => {
                     path: "/test/subTest/item"
                 }));
             });
+        });
+
+        it('should rename routes with "." to "-"', () => {
+            let routeStub = sinon.stub(fakeServer, 'route', () => {});
+
+            fakeControllersMap = {
+                'ControllerTest': {
+                    'list': () => {}
+                }
+            };
+
+            hapiRaml = new HapiRaml(fakeServer, fakeControllersMap, './dotTest.raml');
+            return expect(hapiRaml.hookup()).to.be.rejectedWith(/Tried to find 'test_type' on Controller '\w+' but it did not exist/);
         });
 
         it('should map a sub level collection to the Controller for that collection name', () => {
