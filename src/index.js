@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import RAML from './utils/RAML';
-import ramlParser from 'raml-parser';
+import ramlParser from 'raml-1-parser';
 import _ from 'lodash';
 import dbg from 'debug';
 

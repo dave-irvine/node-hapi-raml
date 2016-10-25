@@ -34,7 +34,7 @@ export default class RAML {
 
     loadRAMLFile() {
         return new Promise((resolve, reject) => {
-            this.parser.loadFile(this.resolvedRamlPath)
+            this.parser.loadApi(this.resolvedRamlPath)
             .then((parsedData) => {
                 if (parsedData && !parsedData.baseUri) {
                     return reject(new Error('Missing `baseUri` property'));
@@ -77,16 +77,32 @@ export default class RAML {
             } else {
                 //A default auth strategy is found at the top of the ast
                 //This can be overriden by an authStrategy on a resource
+                debug(`Checking for default auth strategy`);
+                debug(ast.securedBy);
+                debug(ast);
                 if (ast.securedBy !== undefined) {
                     defaultAuthStrategies = ast.securedBy;
                 }
             }
 
-            resources.forEach((resource) => {
+            resources.forEach((_resource) => {
                 let baseClassName,
                     className,
                     classFunction,
                     strippedRelativeUri;
+
+                let resource = {
+                    relativeUri: _resource.relativeUri().value(),
+                    methods: _resource.methods()
+                };
+
+                if (_resource.type && _resource.type()) {
+                    resource.type = _resource.type().name();
+                }
+
+                if (_resource.resources && _resource.resources()) {
+                    resource.resources = _resource.resources();
+                }
 
                 if (resource.relativeUri === undefined) {
                     throw new Error('Resource is not parseable, no relativeUri');
@@ -172,20 +188,41 @@ export default class RAML {
                     throw new Error('Resource is not parseable, no methods');
                 }
 
-                resource.methods.forEach((method) => {
+                resource.methods.forEach((_method) => {
+                    let method = {
+                        method: _method.method()
+                    };
+
+                    if (_method.responses && _method.responses()) {
+                        method.responses = _method.responses();
+                    }
+
+                    if (_method.securedBy && _method.securedBy()) {
+                        method.securedBy = _method.securedBy();
+                    }
+
                     debug(`Parsing resource method ${method.method}`);
                     let methodClassFunction = resource.hapi.classFunction;
 
                     resource.hapi.method = uppercase(method.method);
                     resource.hapi.responses = method.responses;
 
-                    if (method.securedBy !== undefined) {
-                        debug(`Method has an authStrategy ${method.securedBy}`);
-                        resource.hapi.authStrategy = method.securedBy;
+                    debug(`Checking method securedBy property`);
+                    debug(method.securedBy);
+
+                    if (method.securedBy && method.securedBy.length === 1) {
+                        debug(`Method has an authStrategy`);
+                        debug(method.securedBy);
+                        resource.hapi.authStrategy = method.securedBy[0].securitySchemeName();
                     } else {
                         if (defaultAuthStrategies !== undefined) {
-                            debug(`There is a default authStrategy that will affect this resource ${defaultAuthStrategies}`);
-                            resource.hapi.authStrategy = defaultAuthStrategies;
+                            if (defaultAuthStrategies.length === 1) {
+                                let defaultAuthStrategy = defaultAuthStrategies[0];
+                                debug(`There is a default authStrategy that will affect this resource ${defaultAuthStrategy.securitySchemeName()}`);
+                                resource.hapi.authStrategy = defaultAuthStrategy.securitySchemeName();
+                            } else {
+                                debug(`Multiple default auth strategies.`);
+                            }
                         } else {
                             debug(`There is no authStrategy for this resource`);
                             resource.hapi.authStrategy = [null];
@@ -233,6 +270,7 @@ export default class RAML {
 
                 if (resource.resources) {
                     debug(`Resource has sub resources`);
+                    debug(resource.resources);
                     let mappedRoutes = resourcesParser(resource.resources, resource, ast);
                     routeMap = _.flatten([routeMap, mappedRoutes]);
                 }
@@ -243,8 +281,17 @@ export default class RAML {
 
         return new Promise((resolve, reject) => {
             this.loadRAMLFile()
-            .then((ast) => {
+            .then((_ast) => {
                 try {
+                    let ast = {
+                        resources: _ast.resources(),
+                        baseUri: _ast.baseUri().value()
+                    };
+
+                    if (_ast.securedBy && _ast.securedBy()) {
+                        ast.securedBy = _ast.securedBy();
+                    }
+
                     var parsedResources = resourcesParser(ast.resources, ast);
                     resolve(parsedResources);
                 } catch (e) {
