@@ -39,14 +39,14 @@ export default class HapiRaml {
                     let controller = controllersMap[route.className];
 
                     if (controller === undefined) {
-                        return reject(`Tried to find Controller '${route.className}' but it did not exist.`);
+                        return reject(new Error(`Tried to find Controller '${route.className}' but it did not exist.`));
                     }
 
                     let controllerFunction = controller[route.classFunction];
 
                     //The Controller class for this route must contain the function for this route
                     if (controllerFunction === undefined || typeof controllerFunction !== 'function') {
-                        return reject(`Tried to find '${route.classFunction}' on Controller '${route.className}' but it did not exist.`);
+                        return reject(new Error(`Tried to find '${route.classFunction}' on Controller '${route.className}' but it did not exist.`));
                     }
 
                     if (route.authStrategy !== undefined) {
