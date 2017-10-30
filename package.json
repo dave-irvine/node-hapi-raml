@@ -8,7 +8,9 @@
     "postversion": "git push && git push --tags",
     "pretest": "eslint src/",
     "test": "mocha --compilers js:babel-core/register",
-    "build": "babel src --out-dir lib"
+    "build": "babel src --out-dir lib",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "hapi",
@@ -22,7 +24,8 @@
     "lodash": "^4.16.4",
     "pluralize": "^3.0.0",
     "raml-1-parser": "^1.1.6",
-    "string": "^3.3.3"
+    "string": "^3.3.3",
+    "snyk": "^1.47.0"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",
@@ -41,5 +44,6 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/dave-irvine/node-hapi-raml.git"
-  }
+  },
+  "snyk": true
 }
